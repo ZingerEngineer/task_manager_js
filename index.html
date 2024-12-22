@@ -13,14 +13,14 @@
     <div class="container">
         <header>
             <h1>Task Manager</h1>
-            <button id="themeToggle" class="theme-toggle">🌙</button>
+            <button id="themeToggle" class="theme-toggle">
+                <img src="./svgs/moon.svg" alt="Dark mode" class="theme-icon">
+            </button>
         </header>
-
         <nav>
             <button class="active" data-view="tasks">Tasks</button>
             <button data-view="about">About</button>
         </nav>
-
         <main id="mainContent">
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Search tasks...">
@@ -31,18 +31,49 @@
             </div>
 
             <form id="taskForm" class="task-form">
-                <input type="text" id="taskTitle" placeholder="Task title" required>
-                <input type="date" id="taskDate" required>
-                <select id="taskPriority" required>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                </select>
+                <div class="form-header">
+                    <img src="./svgs/task.svg" alt="Add task" class="label-icon">
+                    <h1>
+                        Create a new task
+                    </h1>
+                </div>
+
+                <div class="input-group">
+                    <div class="label-wrapper">
+                        <img style="width: 1.8rem;" src="./svgs/type-task.svg" alt="task name icon"
+                            class="form-input-label-icon">
+                        <label for="taskTitle" class="task-label">Task name:</label>
+                    </div>
+                    <input class="input-field" type="text" id="taskTitle" placeholder="Task title" required>
+                </div>
+                <div class="input-group">
+                    <div class="label-wrapper">
+                        <img src="./svgs/date.svg" alt="task date icon" class="form-input-label-icon">
+                        <label for=" taskDate" class="task-label">Task date:</label>
+                    </div>
+                    <input type="date" id="taskDate" class="input-field" required>
+                </div>
+
+                <div class="input-group">
+                    <div class="label-wrapper">
+                        <img src="./svgs/priority.svg" alt="task priority icon" class="form-input-label-icon">
+                        <label for="taskPriority" class="task-label">Task priority:</label>
+                    </div>
+                    <select id="taskPriority" class="input-field" required>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+
+
                 <button type="submit">Add Task</button>
             </form>
 
             <div id="taskList" class="task-list"></div>
         </main>
+
+
     </div>
 
     <script src="./main.js"></script>
