@@ -35,5 +35,5 @@
 }
 
 .theme-toggle:hover {
-  transform: rotate(360deg);
+  transform: translate(0, -3px);
 }
