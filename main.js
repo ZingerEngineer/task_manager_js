@@ -1,3 +1,13 @@
+function capitalizeWords(str) {
+  if (typeof str !== 'string') {
+    throw new TypeError('Input must be a string')
+  }
+  return str
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
+
 class TaskManager {
   constructor() {
     this.tasks = []
@@ -104,7 +114,11 @@ class ThemeManager {
   }
 
   updateToggleButton(theme) {
-    this.themeToggle.textContent = theme === 'light' ? '🌙' : '☀️'
+    const sunIcon =
+      '<img src="./svgs/sun.svg" class="theme-icon" alt="Sun Icon" />'
+    const moonIcon =
+      '<img src="./svgs/moon.svg" class="theme-icon" alt="Moon Icon" />'
+    this.themeToggle.innerHTML = theme === 'light' ? moonIcon : sunIcon
   }
 }
 
@@ -184,21 +198,34 @@ class UIManager {
   createTaskElement(task) {
     const taskElement = document.createElement('div')
     taskElement.className = `task-item ${task.completed ? 'completed' : ''}`
+    taskElement.id = task.id
     taskElement.innerHTML = `
+      ${
+        task.completed
+          ? ' <div class="done-ribbon"><img src="./svgs/done.svg" alt="Task Completed" class="done-ribbon-img"></div>'
+          : ''
+      }
           <div class="task-content">
-              <h3>${task.title}</h3>
+           
+              <h3>${capitalizeWords(task.title)}</h3>
               <p>Due: ${task.dueDate}</p>
-              <span class="priority ${task.priority}">${task.priority}</span>
+              <span class="priority ${task.priority}">${capitalizeWords(
+      task.priority
+    )}</span>
           </div>
           <div class="task-actions">
-              <button onclick="this.closest('.task-item').dispatchEvent(new CustomEvent('toggleStatus'))">
-                  ${task.completed ? '↩️' : '✓'}
+              <button class="task-button" onclick="this.closest('.task-item').dispatchEvent(new CustomEvent('toggleStatus'))">
+                  ${
+                    task.completed
+                      ? '<img class="task-button-img" src="./svgs/return.svg" alt="Task Not Completed">'
+                      : '<img class="task-button-img" src="./svgs/check.svg" alt="Task Completed">'
+                  }
               </button>
-              <button onclick="this.closest('.task-item').dispatchEvent(new CustomEvent('editTask'))">
-                  ✏️
+              <button class="task-button edit-button" onclick="this.closest('.task-item').dispatchEvent(new CustomEvent('editTask'))">
+              <img class="task-button-img" src="./svgs/pen.svg" alt="Edit task">
               </button>
-              <button onclick="this.closest('.task-item').dispatchEvent(new CustomEvent('deleteTask'))">
-                  🗑️
+              <button class="task-button delete-button" onclick="this.closest('.task-item').dispatchEvent(new CustomEvent('deleteTask'))">
+                <img class="task-button-img " src="./svgs/trash.svg" alt="Delete task">
               </button>
           </div>
       `
@@ -224,28 +251,49 @@ class UIManager {
   }
 
   showEditForm(task) {
-    const currentElement = document.querySelector(`[data-task-id="${task.id}"]`)
-    const form = document.createElement('form')
-    form.className = 'edit-form'
+    const currentElement = document.getElementById(task.id)
+    const form = document.createElement('div')
+    form.className = `task-item ${task.completed ? 'completed' : ''}`
+    form.id = task.id
     form.innerHTML = `
-          <input type="text" value="${task.title}" required>
-          <input type="date" value="${task.dueDate}" required>
-          <select>
-              <option value="low" ${
-                task.priority === 'low' ? 'selected' : ''
-              }>Low</option>
-              <option value="medium" ${
-                task.priority === 'medium' ? 'selected' : ''
-              }>Medium</option>
-              <option value="high" ${
-                task.priority === 'high' ? 'selected' : ''
-              }>High</option>
-          </select>
-          <button type="submit">Save</button>
-          <button type="button">Cancel</button>
+          <div class="task-edit-content">
+           
+              <div class="input-group">
+              <label for="taskTitle" class="task-title">Title:</label>
+                <input class="edit-input" type="text" value="${
+                  task.title
+                }" required>
+              </div>
+             <div  class="input-group">
+              <label for="taskDate" class="task-title">Due Date:</label>
+              <input class="edit-input" type="date" value="${
+                task.dueDate
+              }" required>
+             </div>
+             
+             <div class="input-group">
+              <label for="taskPriority" class="task-title">Task priority:</label>
+              <select class="edit-input">
+                  <option value="low" ${
+                    task.priority === 'low' ? 'selected' : ''
+                  }>Low</option>
+                  <option value="medium" ${
+                    task.priority === 'medium' ? 'selected' : ''
+                  }>Medium</option>
+                  <option value="high" ${
+                    task.priority === 'high' ? 'selected' : ''
+                  }>High</option>
+              </select>
+             </div>
+          </div>
+          <div class="task-actions-edit">
+           <button type="button" class="cancel-edit-button"><img src="./svgs/cross.svg"></button>
+           <button type="submit" class="confirm-edit-button"><img src="./svgs/check.svg"></button>
+          </div>
+          
       `
 
-    form.onsubmit = (e) => {
+    form.querySelector('button[type="submit"]').onclick = (e) => {
       e.preventDefault()
       const [title, dueDate, priority] = [
         form.querySelector('input[type="text"]').value,
@@ -269,16 +317,21 @@ class UIManager {
     const mainContent = document.getElementById('mainContent')
     mainContent.innerHTML = `
           <div class="about-section">
-              <h2>About Task Manager</h2>
+              <div class="about-title-wrapper">
+                <img src="./svgs/priority.svg" alt="about" class="about-img">
+                <h2>About Task Manager:</h2>
+              </div>
               <p>A simple and efficient way to manage your daily tasks.</p>
-              <h3>Features:</h3>
+              <div class="about-features">
+               <h3>Features:</h3>
               <ul>
-                  <li>Add, edit, and delete tasks</li>
-                  <li>Mark tasks as completed</li>
-                  <li>Sort tasks by priority or due date</li>
-                  <li>Search functionality</li>
-                  <li>Dark/Light theme toggle</li>
+                  <li>Add, edit, and delete tasks.</li>
+                  <li>Mark tasks as completed.</li>
+                  <li>Sort tasks by priority or due date.</li>
+                  <li>Search functionality.</li>
+                  <li>Dark/Light theme toggle.</li>
               </ul>
+              </div>
           </div>
       `
   }
@@ -298,4 +351,3 @@ document.addEventListener('DOMContentLoaded', () => {
   uiManager.initialize()
   themeManager.initialize()
 })
-
